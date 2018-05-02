@@ -9,10 +9,10 @@ create simple, yet powerfull command-based system for operating with a files, fo
 ### Currently added commands:
 1. RUN -> Runs a program. Via the command the program window can be modified as follows:  
 ```  
-Program name: cmd.exe *minimized*  
-Program name: cmd.exe *maximized*  
-Program name: cmd.exe *hidden*  
-Program name: cmd.exe *normal*
+Program name: cmd.exe __minimized__  
+Program name: cmd.exe __maximized__  
+Program name: cmd.exe __hidden__  
+Program name: cmd.exe __normal__
 ```  
 > The *italic* words are formal parameter(s). If the program don't find any parameter, the window size will be **normal**.  
 
