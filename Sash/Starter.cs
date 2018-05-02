@@ -17,9 +17,18 @@ namespace SASH
 
         #region Private
 
-        private bool CheckPath(string path)
+        /// <summary>
+        /// Checks if a specified <paramref name="path"/> exists.
+        /// </summary>
+        /// <param name="path">The path specified.</param>
+        /// <returns>boolean</returns>
+        private static bool CheckPath(string path)
             => Directory.Exists(path);
 
+        /// <summary>
+        /// Processes a given <paramref name="command"/> specified.
+        /// </summary>
+        /// <param name="command">The command.</param>
         private void Process(string command)
         {
             if (!CheckPath(this.path)) throw new ArgumentException(this.path);
@@ -32,8 +41,14 @@ namespace SASH
                     break;
                 case "create": Create();
                     break;
+                case "exit": Internal.KillCmd();
+                    break;
+                case "clear":
+                    try { Console.Clear(); new Starter(this.path); }
+                    catch (System.ComponentModel.Win32Exception) { Internal.KillCmd(); }
+                    break;
                 default: Internal.Error($"Unrecognized command \"{command}\"!");
-                    System.Threading.Thread.Sleep(1000);
+                    new Starter(this.path);
                     break;
             }
         }
@@ -100,9 +115,14 @@ namespace SASH
                 process.Start();
             }
             catch (InvalidOperationException) { Internal.KillCmd(); }
-            process.WaitForExit();
+
+            catch (System.ComponentModel.Win32Exception)
+            { Internal.Error($"The program \"{programName}\" cannot be found or does not exists!"); }
             //dispose at the end
             process.Dispose();
+
+            new Starter(this.path);
+
         }
 
         /// <summary>
@@ -136,10 +156,18 @@ namespace SASH
 
         private void DeleteContent()
         {
-            foreach (string item in Directory.GetFiles(this.path))
+            var directoryInfo = new DirectoryInfo(this.path);
+            //check if the folder is not empty
+            if (directoryInfo.GetFileSystemInfos().Length != 0)
             {
-                File.Delete(item);
+                foreach (string item in Directory.GetFiles(this.path))
+                {
+                    File.Delete(item);
+                }
             }
+            else Internal.Error("Empty directory given!");
+
+            new Starter(this.path);
         }
 
         #endregion
