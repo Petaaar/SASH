@@ -4,6 +4,9 @@ using System.Diagnostics;
 
 namespace SASH
 {
+    /// <summary>
+    /// The starting class of the program. CANNOT be inherited.
+    /// </summary>
     sealed class Starter
     {
         #region Fields & Encapsulation
@@ -142,6 +145,11 @@ namespace SASH
         #endregion
 
         #region Public
+
+        static void Main()
+        {
+            var s = new Starter(@"C:\Users\petar\source\repos\Sash\Sash\files\");
+        }
 
         #endregion
 
