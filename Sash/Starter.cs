@@ -151,7 +151,6 @@ namespace SASH
 
         private void Create()
         {
-
         }
 
         private void DeleteContent()
