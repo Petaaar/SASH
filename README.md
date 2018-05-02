@@ -9,12 +9,12 @@ create simple, yet powerfull command-based system for operating with a files, fo
 ### Currently added commands:
 1. RUN -> Runs a program. Via the command the program window can be modified as follows:  
 ```  
-Program name: cmd.exe __minimized__  
-Program name: cmd.exe __maximized__  
-Program name: cmd.exe __hidden__  
-Program name: cmd.exe __normal__
+Program name: cmd.exe MINIMIZED  
+Program name: cmd.exe MAXIMIZED  
+Program name: cmd.exe HIDDEN  
+Program name: cmd.exe NORMAL  
 ```  
-> The *italic* words are formal parameter(s). If the program don't find any parameter, the window size will be **normal**.  
+> The CAPS-CASE words are formal parameter(s), __*case-insensitive*__. If the program don't find any parameter, the window size will be **normal**.  
 
 2. DELETE -> Deletes one or many files in a specified directory. Not finished yet.  
 
