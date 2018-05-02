@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Diagnostics;
+using System.Collections.Generic;
 
 namespace SASH
 {
@@ -29,15 +30,24 @@ namespace SASH
         /// Processes a given <paramref name="command"/> specified.
         /// </summary>
         /// <param name="command">The command.</param>
-        private void Process(string command)
+        private void Process(string commandFull)
         {
             if (!CheckPath(this.path)) throw new ArgumentException(this.path);
+            var commandArr = commandFull.Split(new char[] { ' ' }, StringSplitOptions.None);
+            var commandInside = new List<string>();
+
+            for (int i = 0; i < commandArr.Length; i++) commandInside.Add(commandArr[i]);
+
+            var command = commandInside[0];
+
+
+            commandInside.Remove(commandInside[0]);
 
             switch (command)
             {
-                case "run": Run();
+                case "run": Run(commandInside.ToArray());
                     break;
-                case "delete": Delete();
+                case "delete": Delete(commandInside.ToArray());
                     break;
                 case "create": Create();
                     break;
@@ -55,41 +65,26 @@ namespace SASH
 
 #pragma warning disable CC0091 // Use static method
         /// <summary>
-                              /// Runs a program specified by the user, the process window could be 
-                              /// changed by the user. Usage of the command: [(programName)] (windowStyle).
-                              /// </summary>
-        private void Run()
+        /// Runs a program specified by the user, the process window could be 
+        /// changed by the user. Usage of the command: [(programName)] (windowStyle).
+        /// </summary>
+        /// /// <param name="arguments">An string array for the arguments needed.</param>
+        private void Run(string[] arguments)
 #pragma warning restore CC0091 // Use static method
         {
-            Console.Write("Program name:"); var name = Console.ReadLine();
+            if (arguments.Length == 0)
+                throw new ArgumentException("No arguments given. What to run!?");
+
             var programName = string.Empty;
             var windowStyle = string.Empty;
 
-            // get any arguments to the command
-            if (name.Contains(" "))
+            if (arguments.Length == 2)
             {
-                int index = 0;
-
-                for (int i = 0; i < name.Length; i++)
-                    if (name[i] == ' ')
-                        index = i; //set the current index.
-
-                var pname = new System.Text.StringBuilder();//program name
-                var wstyle = new System.Text.StringBuilder(); //window style
-
-                pname.Append(programName);
-                wstyle.Append(windowStyle);
-
-                for (int i = 0; i < index; i++) //get the program name!
-                    pname.Append(name[i]);
-                programName = pname.ToString();
-
-                for (int i = index + 1; i < name.Length; i++) //get the argument.
-                    wstyle.Append(name[i]);
-                windowStyle = wstyle.ToString();
+                programName = arguments[0];
+                windowStyle = arguments[1];
             }
-            else programName = name;
-            
+            else if (arguments.Length == 1) programName = arguments[0];
+
            
             //run the program specified
             var process = new Process();
@@ -125,46 +120,82 @@ namespace SASH
 
         }
 
+#pragma warning disable CC0091 //static method
+#pragma warning disable CC0001 //use 'var' whenever possible
         /// <summary>
         /// Deletes s file or many files in a specified or the current directory.
         /// </summary>
-        private void Delete()
+        /// <param name="arguments">An string array for the arguments needed.</param>
+        private void Delete(string[] arguments)
         {
-            Console.WriteLine($"Current path specified:{this.path}");
-            Console.Write("Delete it's content? [Y/N]:");
-            var yn = Console.ReadLine().ToLower().ToCharArray()[0];
+            if (arguments.Length == 0)
+                Internal.Error("No arguments given. What to run!?");
+            if (arguments.Length <= 2 || arguments.Length > 3)
+                Internal.Error("Too many or too few arguments given!");
+            if (arguments[1] != "in")
+                Internal.Error($"Expected keyword IN in the place of \"{arguments[1]}\".");
 
-            if (yn == 'y' || yn == 'n')
+            var file = arguments[0];
+            var destination = arguments[2];
+            
+
+            if (destination == "path") destination = this.path;
+            var dirInfo = new DirectoryInfo(destination);
+
+            try
             {
-                if (yn == 'y')
+                if (!CheckPath(destination))
+                    Internal.Error($"The destination \"{destination}\" does not exist!");
+                else if (dirInfo.GetFileSystemInfos().Length == 0)
+                    Internal.Error($"The destination \"{destination}\" is empty!");
+            } catch (FileNotFoundException)
+            {
+                Internal.Error($"The destination \"{destination}\" does not exist!");
+                new Starter(this.path);
+            }
+
+            if (file == "*")
+            {
+                try
                 {
-                    Console.Write("Are you sure? This will delete all files in the directory!:");
-                    var yes = Console.ReadLine();
-                    if (yes == "yes" || yes.ToCharArray()[0] == 'y')
-                        DeleteContent();
+                    DeleteFullContent(destination);
+                }
+                catch (IOException) { Internal.Error("Directory not found! TERMINATING!"); }
+            }
+            else
+            {
+                if (File.Exists(destination + @"\" + file))
+                {
+                    file = destination + @"\" + file;
+                    File.Delete(file);
+                }
+                else
+                {
+                    Internal.Error($"File \"{file}\" does not exists in directory \"{destination}\"!");
+                    new Starter(this.path);
                 }
             }
-            else Internal.Error("EXPECTED Y/N VALUE!");
 
-            System.Threading.Thread.Sleep(1000);
+            System.Threading.Thread.Sleep(2500);
         }
+//restore the warnings
+#pragma warning restore 
 
         private void Create()
         {
+
         }
 
-        private void DeleteContent()
+        /// <summary>
+        /// Deletes EVERYTHING in a given <paramref name="destination"/>.
+        /// </summary>
+        /// <param name="destination">The destination.</param>
+        private void DeleteFullContent(string destination)
         {
-            var directoryInfo = new DirectoryInfo(this.path);
-            //check if the folder is not empty
-            if (directoryInfo.GetFileSystemInfos().Length != 0)
-            {
-                foreach (string item in Directory.GetFiles(this.path))
-                {
-                    File.Delete(item);
-                }
-            }
-            else Internal.Error("Empty directory given!");
+            var directoryInfo = new DirectoryInfo(destination);
+
+            foreach (string item in Directory.GetFiles(destination))
+                File.Delete(item);
 
             new Starter(this.path);
         }
@@ -175,7 +206,7 @@ namespace SASH
 
         static void Main()
         {
-            var s = new Starter(@"C:\Users\petar\source\repos\Sash\Sash\files\");
+            var s = new Starter(@"C:\Users\petar\source\repos\Sash\Sash\files");
         }
 
         #endregion
