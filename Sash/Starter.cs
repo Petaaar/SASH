@@ -47,35 +47,32 @@ namespace SASH
             var programName = string.Empty;
             var windowStyle = string.Empty;
 
-            if (name == string.Empty)
+            // get any arguments to the command
+            if (name.Contains(" "))
             {
-                // get any arguments to the command
-                if (name.Contains(" "))
-                {
-                    int index = 0;
+                int index = 0;
 
-                    for (int i = 0; i < name.Length; i++)
-                        if (name[i] == ' ')
-                            index = i; //set the current index.
+                for (int i = 0; i < name.Length; i++)
+                    if (name[i] == ' ')
+                        index = i; //set the current index.
 
-                    var pname = new System.Text.StringBuilder();//program name
-                    var wstyle = new System.Text.StringBuilder(); //window style
+                var pname = new System.Text.StringBuilder();//program name
+                var wstyle = new System.Text.StringBuilder(); //window style
 
-                    pname.Append(programName);
-                    wstyle.Append(windowStyle);
+                pname.Append(programName);
+                wstyle.Append(windowStyle);
 
-                    for (int i = 0; i < index; i++) //get the program name!
-                        pname.Append(name[i]);
-                    programName = pname.ToString();
+                for (int i = 0; i < index; i++) //get the program name!
+                    pname.Append(name[i]);
+                programName = pname.ToString();
 
-                    for (int i = index + 1; i < name.Length; i++) //get the argument.
-                        wstyle.Append(name[i]);
-                    windowStyle = wstyle.ToString();
-                }
-                else programName = name;
+                for (int i = index + 1; i < name.Length; i++) //get the argument.
+                    wstyle.Append(name[i]);
+                windowStyle = wstyle.ToString();
             }
-            else throw new ArgumentNullException();
-
+            else programName = name;
+            
+           
             //run the program specified
             var process = new Process();
             process.StartInfo.FileName = programName;
@@ -99,14 +96,15 @@ namespace SASH
             {
                 process.Start();
             }
-            catch (InvalidOperationException) { Internal.Error("INVALID OPERATION!"); }
-            catch (InvalidProgramException) { Internal.Error("INVALID PROGRAM!"); }
-
+            catch (InvalidOperationException) { Internal.KillCmd(); }
             process.WaitForExit();
             //dispose at the end
             process.Dispose();
         }
 
+        /// <summary>
+        /// Deletes s file or many files in a specified or the current directory.
+        /// </summary>
         private void Delete()
         {
             Console.WriteLine($"Current path specified:{this.path}");
