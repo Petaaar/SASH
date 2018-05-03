@@ -36,4 +36,23 @@ internal static class Internal
     /// <returns>new Starter() object.</returns>
     public static SASH.Starter Starter(string path) 
         => new SASH.Starter(path);
+
+    /// <summary>
+    /// A simple extension method to the ARRAYS. 
+    /// Converts T array to a <see cref="System.Collections.Generic.List{T}"/>.
+    /// REMOVES null ITEMS.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="arguments"></param>
+    /// <returns></returns>
+    public static System.Collections.Generic.List<T> ToList<T>(this T[] arguments)
+    {
+        var list = new System.Collections.Generic.List<T>();
+        if (arguments.Length >= 1)
+            foreach (var item in arguments)
+                if (item != null)
+                    list.Add(item);
+
+        return list;
+    }
 }
