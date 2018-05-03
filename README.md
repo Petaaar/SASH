@@ -3,7 +3,7 @@ by Petar Angelov - [Petaaar](https://github.com/Petaaar)
 
 ### The SASH (or Simple Automated Script Headers) Project.
 
-The SASH (or Simple Automated Script Headers) Project is a project, where I, by myself try to 
+The SASH (or Simple Automated Script Headers) Project is a project, where I try to 
 create simple, yet powerfull command-based system for operating with a files, folders, ect..
 
 ### Currently added commands:
@@ -15,7 +15,7 @@ run cmd.exe HIDDEN
 run cmd.exe NORMAL  
 ```  
 
-The __*<CAPS_CASE>*__ words are formal parameter(s), __*case-insensitive*__. If the program don't find any parameter, the window size will be **normal**.  
+The __*<CAPS_CASE>*__ words are formal parameter(s), __*case-insensitive*__. If the program don't find any parameter, the window size will be set to **normal**.  
 
 2. DELETE -> Deletes one or many files in a specified directory.  
 ```  
