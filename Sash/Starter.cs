@@ -26,39 +26,46 @@ namespace SASH
         private static bool CheckPath(string path)
             => Directory.Exists(path);
 
+
         /// <summary>
-        /// Processes a given <paramref name="command"/> specified.
+        /// Processes a given <paramref name="commandFull"/> specified.
         /// </summary>
-        /// <param name="command">The command.</param>
+        /// <param name="commandFull">The command.</param>
         private void Process(string commandFull)
         {
             if (!CheckPath(this.path)) throw new ArgumentException(this.path);
+
             var commandArr = commandFull.Split(new char[] { ' ' }, StringSplitOptions.None);
             var commandInside = new List<string>();
 
-            for (int i = 0; i < commandArr.Length; i++) commandInside.Add(commandArr[i]);
+            System.Threading.Tasks.Parallel.For(0, commandArr.Length,
+                x => commandInside.Add(commandArr[x]));
 
             var command = commandInside[0];
-
-
+            
             commandInside.Remove(commandInside[0]);
 
             switch (command)
             {
-                case "run": Run(commandInside.ToArray());
+                case "run":
+                    Run(commandInside.ToArray());
                     break;
-                case "delete": Delete(commandInside.ToArray());
+                case "delete":
+                    Delete(commandInside.ToArray());
                     break;
-                case "create": Create();
+                case "create":
+                    Create();
                     break;
-                case "exit": Internal.KillCmd();
+                case "exit":
+                    Internal.KillCmd();
                     break;
                 case "clear":
-                    try { Console.Clear(); new Starter(this.path); }
+                    try { Console.Clear(); Internal.Starter(this.path); }
                     catch (System.ComponentModel.Win32Exception) { Internal.KillCmd(); }
                     break;
-                default: Internal.Error($"Unrecognized command \"{command}\"!");
-                    new Starter(this.path);
+                default:
+                    Internal.Error($"Unrecognized command \"{command}\"!");
+                    Internal.Starter(this.path);
                     break;
             }
         }
@@ -116,7 +123,7 @@ namespace SASH
             //dispose at the end
             process.Dispose();
 
-            new Starter(this.path);
+            Internal.Starter(this.path);
 
         }
 
@@ -139,7 +146,7 @@ namespace SASH
             var destination = arguments[2];
             
 
-            if (destination == "path") destination = this.path;
+            if (destination == nameof(this.path)) destination = this.path;
             var dirInfo = new DirectoryInfo(destination);
 
             try
@@ -151,7 +158,7 @@ namespace SASH
             } catch (FileNotFoundException)
             {
                 Internal.Error($"The destination \"{destination}\" does not exist!");
-                new Starter(this.path);
+                Internal.Starter(this.path);
             }
 
             if (file == "*")
@@ -172,7 +179,7 @@ namespace SASH
                 else
                 {
                     Internal.Error($"File \"{file}\" does not exists in directory \"{destination}\"!");
-                    new Starter(this.path);
+                    Internal.Starter(this.path);
                 }
             }
 
@@ -197,7 +204,7 @@ namespace SASH
             foreach (string item in Directory.GetFiles(destination))
                 File.Delete(item);
 
-            new Starter(this.path);
+            Internal.Starter(this.path);
         }
 
         #endregion
@@ -218,12 +225,7 @@ namespace SASH
 
             Process(command);
         }
-        
-        ~Starter() => Array.ForEach(System.Diagnostics.Process.GetProcessesByName("cmd"),
-                x => x.Kill());
 
-        public static void Kill()
-            => Array.ForEach(System.Diagnostics.Process.GetProcessesByName("cmd"),
-                    x => x.Kill());
+        ~Starter() => Internal.KillCmd();
     }
 }
