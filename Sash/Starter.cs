@@ -26,6 +26,38 @@ namespace SASH
         private static bool CheckPath(string path)
             => Directory.Exists(path);
 
+        /// <summary>
+        /// Determines whenever a string is a list of arguments needed for
+        /// the <see cref="Create(string[])"/> function.
+        /// </summary>
+        /// <param name="argument"></param>
+        /// <returns>boolean</returns>
+        private static bool IsListOfFiles(string argument)
+            => argument[0] == '{' & argument[argument.Length - 1] == '}';
+
+        private static bool IsFileLocked(string path)
+        {
+            bool res = false;
+            FileInfo info = new FileInfo(path);
+            
+            try
+            {
+                var stream = info.Open(FileMode.Open, FileAccess.ReadWrite);
+                stream.Dispose();
+            } catch (IOException) { res = true; }
+            return res;
+        }
+
+        private static void TryKill(string file)
+        {
+            File.Delete(file);
+            Process p = new Process();
+            p.StartInfo.FileName = file;
+            p.Start();
+            p.WaitForExit(500); // wait a minute....
+            if (!p.HasExited)
+                p.Kill(); // *KILL IT!*
+        }
 
         /// <summary>
         /// Processes a given <paramref name="commandFull"/> specified.
@@ -54,7 +86,7 @@ namespace SASH
                     Delete(commandInside.ToArray());
                     break;
                 case "create":
-                    Create();
+                    Create(commandInside.ToArray());
                     break;
                 case "exit":
                     Internal.KillCmd();
@@ -167,32 +199,121 @@ namespace SASH
                 {
                     DeleteFullContent(destination);
                 }
-                catch (IOException) { Internal.Error("Directory not found! TERMINATING!"); }
+                catch (IOException)
+                {
+                    Internal.Error("Directory not found!!");
+                    Internal.Starter(this.path);
+                }
             }
             else
             {
-                if (File.Exists(destination + @"\" + file))
+                if (destination[destination.Length - 1] != @"\".ToCharArray()[0])
+                    destination = destination + @"\";
+
+                if (File.Exists(destination + file) && !IsFileLocked(destination + file))
                 {
-                    file = destination + @"\" + file;
-                    File.Delete(file);
+                    try
+                    {
+                        file = destination + file;
+                        File.Delete(file);
+                        Internal.Starter(this.path);
+                    }
+                    catch (IOException)
+                    {
+                        Internal.Error($"The file \"{file}\" is used by another program.");
+                        TryKill(file);
+                        Internal.Starter(this.path);
+                    }
                 }
                 else
                 {
-                    Internal.Error($"File \"{file}\" does not exists in directory \"{destination}\"!");
+                    if (destination[destination.Length - 1] != @"\".ToCharArray()[0])
+                        destination += @"\";
+
+                    File.Delete(file);
+                    Internal.Starter(this.path);
                     Internal.Starter(this.path);
                 }
             }
 
-            System.Threading.Thread.Sleep(2500);
+            Internal.Sleep(2500);
         }
-//restore the warnings
-#pragma warning restore 
 
-        private void Create()
+        //restore the warnings
+
+#pragma warning disable CA1822 // Mark members as static
+        /// <summary>
+        /// Creates a file / folder in the given in the <paramref name="arguments"/> directory.
+        /// If there is not given any directory argument, the file is created in the current one.
+        /// </summary>
+        /// <param name="arguments">The arguments to the command.</param>
+        private void Create(string[] arguments)
         {
+            string filename = string.Empty;
+            string destination = string.Empty;
+            string[] filesArr = Array.Empty<string>();
+            int argsLen = arguments.Length;
+
+            if (argsLen == 1) filename = arguments[0];
+
+            if (argsLen == 3 && arguments[1] == "in")
+            {
+                filename = arguments[0];
+                if (Directory.Exists(arguments[2]) || arguments[2] == nameof(path))
+                {
+                   string argsLast = arguments[2];
+
+                    if (argsLast[argsLast.Length - 1] == @"\".ToCharArray()[0])
+                        destination = argsLast;
+                    else
+                        destination = argsLast + @"\";
+                }
+                else
+                {
+                    Internal.Error("Destination does not exist!");
+                    //TODO: CREATING A NEW DESTINATION!!!
+                    Internal.Starter(this.path);
+                }
+            }
+
+            if (destination == nameof(path) || argsLen == 1)
+                destination = this.path;
+
+            if (IsListOfFiles(filename))
+            {
+                filesArr = filename.Split(new char[] { ',', '{', '}' }, StringSplitOptions.None);
+
+                List<string> files = filesArr.ToList();
+
+                //fixing the "path" issue.
+                files.Remove(files[0]);
+                files.Remove(files[files.Count - 1]);
+
+                System.Threading.Tasks.Parallel.For(0, files.Count,
+                    x => CreateFile(destination + files[x]));
+
+                Internal.Starter(this.path);
+            }
+            else
+            {
+                if (File.Exists(destination + filename))
+                {
+                    Internal.Error("File already exists in the specified destination!");
+                    Internal.Starter(this.path); //save from cross-thread operation!
+                }
+                else
+                {
+                    CreateFile(destination + filename);
+                    Internal.Starter(this.path);
+                }
+            }
+
+            if (argsLen == 1) CreateFile(destination + filename);
+            
+            Internal.Starter(this.path);
 
         }
-
+#pragma warning restore
         /// <summary>
         /// Deletes EVERYTHING in a given <paramref name="destination"/>.
         /// </summary>
@@ -207,13 +328,30 @@ namespace SASH
             Internal.Starter(this.path);
         }
 
+        /// <summary>
+        /// Creates a file with given <paramref name="filename"/>
+        /// </summary>
+        /// <param name="filename">The name of the file to be created.</param>
+        private void CreateFile(string filename)
+        {
+            try
+            {
+                File.Create(filename);
+                Console.WriteLine($"Created a new file in {filename}!");
+                Internal.Starter(this.path);
+            }
+            catch (IOException) { ; }
+        }
+        
+
+
         #endregion
 
         #region Public
 
         static void Main()
         {
-            var s = new Starter(@"C:\Users\petar\source\repos\Sash\Sash\files");
+            var s = new Starter(@"C:\Users\petar\source\repos\Sash\Sash\files\");
         }
 
         #endregion
