@@ -14,6 +14,8 @@ namespace SASH
 
         private readonly string path;
 
+        private string dest;
+
         #endregion
 
         #region Private
@@ -39,12 +41,13 @@ namespace SASH
         {
             bool res = false;
             FileInfo info = new FileInfo(path);
-            
+
             try
             {
                 var stream = info.Open(FileMode.Open, FileAccess.ReadWrite);
                 stream.Dispose();
-            } catch (IOException) { res = true; }
+            }
+            catch (IOException) { res = true; }
             return res;
         }
 
@@ -74,7 +77,7 @@ namespace SASH
                 x => commandInside.Add(commandArr[x]));
 
             var command = commandInside[0];
-            
+
             commandInside.Remove(commandInside[0]);
 
             switch (command)
@@ -89,7 +92,7 @@ namespace SASH
                     Create(commandInside.ToArray());
                     break;
                 case "exit":
-                    Internal.KillCmd();
+                    Environment.Exit(0);
                     break;
                 case "clear":
                     try { Console.Clear(); Internal.Starter(this.path); }
@@ -124,23 +127,28 @@ namespace SASH
             }
             else if (arguments.Length == 1) programName = arguments[0];
 
-           
+
             //run the program specified
             var process = new Process();
             process.StartInfo.FileName = programName;
 
-            switch (windowStyle)
+            switch (windowStyle.ToLower())
             {
-                case "normal": process.StartInfo.WindowStyle = ProcessWindowStyle.Normal;
+                case "normal":
+                    process.StartInfo.WindowStyle = ProcessWindowStyle.Normal;
                     break;
-                case "minimized": process.StartInfo.WindowStyle = ProcessWindowStyle.Minimized;
+                case "minimized":
+                    process.StartInfo.WindowStyle = ProcessWindowStyle.Minimized;
                     break;
-                case "maximized": process.StartInfo.WindowStyle = ProcessWindowStyle.Maximized;
+                case "maximized":
+                    process.StartInfo.WindowStyle = ProcessWindowStyle.Maximized;
                     break;
-                case "hidden": process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                case "hidden":
+                    process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
                     break;
-                    //if we don't have the argument or it's invalid
-                default: process.StartInfo.WindowStyle = ProcessWindowStyle.Normal;
+                //if we don't have the argument or it's invalid
+                default:
+                    process.StartInfo.WindowStyle = ProcessWindowStyle.Normal;
                     break;
             }
 
@@ -175,11 +183,17 @@ namespace SASH
                 Internal.Error($"Expected keyword IN in the place of \"{arguments[1]}\".");
 
             var file = arguments[0];
-            var destination = arguments[2];
-            
+            var destination = string.Empty;
 
-            if (destination == nameof(this.path)) destination = this.path;
+
+            if (arguments[2] == nameof(this.path))
+                destination = this.path;
+            else
+                destination = arguments[2];
+
             var dirInfo = new DirectoryInfo(destination);
+
+
 
             try
             {
@@ -187,7 +201,8 @@ namespace SASH
                     Internal.Error($"The destination \"{destination}\" does not exist!");
                 else if (dirInfo.GetFileSystemInfos().Length == 0)
                     Internal.Error($"The destination \"{destination}\" is empty!");
-            } catch (FileNotFoundException)
+            }
+            catch (FileNotFoundException)
             {
                 Internal.Error($"The destination \"{destination}\" does not exist!");
                 Internal.Starter(this.path);
@@ -197,11 +212,17 @@ namespace SASH
             {
                 try
                 {
+                    Console.WriteLine(path);
                     DeleteFullContent(destination);
                 }
                 catch (IOException)
                 {
-                    Internal.Error("Directory not found!!");
+                    Internal.Error("Directory not found. Retrying..");
+                    try { DeleteFullContent(destination); }
+                    catch (IOException)
+                    {
+                        Internal.Error("FAILED! PLEASE RESTART!"); 
+                    }
                     Internal.Starter(this.path);
                 }
             }
@@ -261,7 +282,7 @@ namespace SASH
                 filename = arguments[0];
                 if (Directory.Exists(arguments[2]) || arguments[2] == nameof(path))
                 {
-                   string argsLast = arguments[2];
+                    string argsLast = arguments[2];
 
                     if (argsLast[argsLast.Length - 1] == @"\".ToCharArray()[0])
                         destination = argsLast;
@@ -309,7 +330,7 @@ namespace SASH
             }
 
             if (argsLen == 1) CreateFile(destination + filename);
-            
+
             Internal.Starter(this.path);
 
         }
@@ -328,6 +349,11 @@ namespace SASH
             Internal.Starter(this.path);
         }
 
+        private void DeleteContent()
+        {
+            DeleteFullContent(this.dest);
+        }
+
         /// <summary>
         /// Creates a file with given <paramref name="filename"/>
         /// </summary>
@@ -340,9 +366,9 @@ namespace SASH
                 Console.WriteLine($"Created a new file in {filename}!");
                 Internal.Starter(this.path);
             }
-            catch (IOException) { ; }
+            catch (IOException) {; }
         }
-        
+
 
 
         #endregion
@@ -361,7 +387,7 @@ namespace SASH
             var command = new GetCommand().ReadCommand();
             this.path = path;
 
-            Process(command);
+            Process(command.ToLower());
         }
 
         ~Starter() => Internal.KillCmd();
