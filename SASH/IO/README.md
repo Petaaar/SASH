@@ -18,11 +18,17 @@ The __*<CAPS_CASE>*__ words are formal parameter(s), __*case-insensitive*__. If 
 ```  
 delete FILE in FOLDER  
 delete * in FOLDER  
-delete FILE(*) in path  
+delete FILE(*) in path   
+delete * in FOLDER(path) where LIKE  
 ```  
 Where the __*FILE*__ is a full file name with it's extension.  
 The __*FOLDER*__ is the path, where we will delete a given file.  
+The "path" is the current path.
 If you use __*__ the program will delete __*ALL*__ files in the given folder.  
+The __*LIKE*__ is a common sign in between all file names in the specified folder.  
+
+### Example: delete * in path where test
+> This example will search for every file, containing "test" in it's name, regardless it's extension and will delete it.
 
 3. CREATE -> Creates a file or directory, relative to a given arguments.  
 ```  
