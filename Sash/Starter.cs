@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
-using System.Collections.Generic;
 using SASH.IO;
+using SASH.Hidden;
 
 namespace SASH
 {
@@ -35,7 +35,7 @@ namespace SASH
             if (!CheckPath(this.path)) throw new ArgumentException(this.path);
 
             var commandArr = commandFull.Split(new char[] { ' ' }, StringSplitOptions.None);
-            var commandInside = new List<string>();
+            var commandInside = new System.Collections.Generic.List<string>();
 
             System.Threading.Tasks.Parallel.For(0, commandArr.Length,
                 x => commandInside.Add(commandArr[x]));
