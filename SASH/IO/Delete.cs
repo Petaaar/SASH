@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using SASH.Hidden;
 
 namespace SASH.IO
 {
@@ -293,15 +294,13 @@ namespace SASH.IO
             }
 
             else if (arguments.Length == 5 && file == "*")
-            {
                 DeleteEverythingWhereContained(destination, arguments[4]);
-            }
+            
 
             else if (arguments.Length == 6 && (file == "*" && arguments[4] == "is"))
-            {
                 DeleteEverythingWhereMatches(destination, arguments[5]);
-            }
-            Internal.Sleep(2500);
+
+            Internal.Sleep(2000);
         }
     }
 }
