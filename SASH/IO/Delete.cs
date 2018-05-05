@@ -115,7 +115,7 @@ namespace SASH.IO
         /// </summary>
         /// <param name="path">The path to look for.</param>
         /// <param name="like">The specific argument.</param>
-        private void DeleteEverythingWhere(string path, string like)
+        private void DeleteEverythingWhereContained(string path, string like)
         {
             if (CheckPath(path))
             {
@@ -157,11 +157,62 @@ namespace SASH.IO
                         }
                     }
                 }
-                else
+                else Internal.Error("Empty \"like\" argument!");
+            }
+            else Internal.Error("The path is incorrect or does not exist!");
+
+            Internal.Starter(this.path);
+        }
+
+        /// <summary>
+        /// Deletes every file with name, matching the <paramref name="matchSign"/> argument.
+        /// </summary>
+        /// <param name="path">The full path to file to look for.</param>
+        /// <param name="matchSign">A sign to look for.</param>
+        private void DeleteEverythingWhereMatches(string path, string matchSign)
+        {
+            if (CheckPath(path))
+            {
+                if (matchSign != string.Empty || matchSign != " " || matchSign != null)
                 {
-                    Internal.Error("Empty \"like\" argument!");
-                    Internal.Starter(this.path);
+                    var dirItems = Directory.GetFiles(path);
+
+                    var commonItems = new System.Collections.Generic.List<string>();
+
+                    if (dirItems.Length != 0) //empty directory
+                    {
+                        foreach (string item in dirItems)
+                            if (Path.GetFileNameWithoutExtension(item) == matchSign)
+                                commonItems.Add(item);
+                    }
+                    else Internal.Error($"The directory {path} is empty!");
+
+                    if (commonItems.Count == 0) Internal.Error($"No items with matching sign \"{matchSign}\" were found in {path}!");
+                    // at least 1 common item
+                    else
+                    {
+                        System.Console.WriteLine("MATCHING FILES FOUND!");
+
+
+                        Internal.Ask($"Show all {commonItems.Count} matching files?[Y/N]:"); char yn = System.Console.ReadLine().ToLower().ToCharArray()[0];
+
+                        if (yn == 'y') //if you want to see all the items
+                        {
+                            System.Console.WriteLine("FILES TO DELETE:");
+                            foreach (string item in commonItems)
+                                System.Console.WriteLine(item);
+                        }
+
+                        Internal.Ask("Are you sure you want to delete all these items?:[Y/N]"); char y = System.Console.ReadLine().ToLower().ToCharArray()[0];
+
+                        if (y == 'y')
+                        {
+                            foreach (string item in commonItems)
+                                File.Delete(item);
+                        }
+                    }
                 }
+                else Internal.Error("Empty \"matchSign\" argument!");
             }
             else Internal.Error("The path is incorrect or does not exist!");
 
@@ -179,13 +230,19 @@ namespace SASH.IO
             this.path = path;
 
             if (arguments.Length == 0)
-                
-            if (arguments.Length <= 2 || arguments.Length > 5)
+            {
+                Internal.Error("Empty arguments!");
+                Internal.Starter(this.path);
+            }
+            if (arguments.Length <= 2 || arguments.Length > 6)
                 Internal.Error("Too many or too few arguments given!");
             if (arguments[1] != "in")
                 Internal.Error($"Expected keyword IN in the place of \"{arguments[1]}\".");
             if (arguments.Length == 5 && arguments[3] != "where")
                 Internal.Error($"Expected keyword WHERE in the place of \"{arguments[3]}\".");
+            if (arguments.Length == 6 && arguments[5] == string.Empty)
+                Internal.Error($"Expected non-empty argument after \"{arguments[4]}\".");
+
 
             var file = arguments[0];
             var destination = string.Empty;
@@ -197,8 +254,7 @@ namespace SASH.IO
                 destination = arguments[2];
 
             var dirInfo = new DirectoryInfo(destination);
-
-
+            
 
             try
             {
@@ -238,9 +294,13 @@ namespace SASH.IO
 
             else if (arguments.Length == 5 && file == "*")
             {
-                DeleteEverythingWhere(destination, arguments[4]);
+                DeleteEverythingWhereContained(destination, arguments[4]);
             }
 
+            else if (arguments.Length == 6 && (file == "*" && arguments[4] == "is"))
+            {
+                DeleteEverythingWhereMatches(destination, arguments[5]);
+            }
             Internal.Sleep(2500);
         }
     }
