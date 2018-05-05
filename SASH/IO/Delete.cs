@@ -4,6 +4,8 @@ namespace SASH.IO
 {
     class Delete
     {
+        #region Private
+        
         private string path;
 
         /// <summary>
@@ -14,6 +16,85 @@ namespace SASH.IO
         private static bool CheckPath(string path)
             => Directory.Exists(path);
 
+        private void DeleteAllInPath(string path)
+        {
+            try
+            {
+                DeleteFullContent(path);
+            }
+            catch (IOException)
+            {
+                Internal.Error("Directory not found. Retrying..");
+                try { DeleteFullContent(path); }
+                catch (IOException)
+                {
+                    Internal.Error("FAILED! PLEASE RESTART!");
+                }
+                Internal.Starter(this.path);
+            }
+        }
+
+        private void DeleteSingleFile(string file, string destination)
+        {
+            try
+            {
+                file = destination + file;
+                File.Delete(file);
+                Internal.Starter(this.path);
+            }
+            catch (IOException)
+            {
+                Internal.Error($"The file \"{file}\" is used by another program.");
+                TryKill(file);
+                Internal.Starter(this.path);
+            }
+        }
+
+        
+
+        /// <summary>
+        /// Deletes EVERYTHING in a given <paramref name="destination"/>.
+        /// </summary>
+        /// <param name="destination">The destination.</param>
+        private void DeleteFullContent(string destination)
+        {
+            var directoryInfo = new DirectoryInfo(destination);
+
+            foreach (string item in Directory.GetFiles(destination))
+                File.Delete(item);
+
+            Internal.Starter(this.path);
+        }
+
+
+        private static bool IsFileLocked(string path)
+        {
+            bool res = false;
+            FileInfo info = new FileInfo(path);
+
+            try
+            {
+                var stream = info.Open(FileMode.Open, FileAccess.ReadWrite);
+                stream.Dispose();
+            }
+            catch (IOException) { res = true; }
+            return res;
+        }
+
+        private static void TryKill(string file)
+        {
+            File.Delete(file);
+            var process = new System.Diagnostics.Process();
+            process.StartInfo.FileName = file;
+            process.Start();
+            process.WaitForExit(500); // wait a minute....
+            if (!process.HasExited)
+                process.Kill(); // *KILL IT!*
+
+            process.Dispose();
+        }
+        #endregion
+        
         /// <summary>
         /// Deletes s file or many files in a specified or the current directory.
         /// </summary>
@@ -56,22 +137,8 @@ namespace SASH.IO
             }
 
             if (file == "*")
-            {
-                try
-                {
-                    DeleteFullContent(destination);
-                }
-                catch (IOException)
-                {
-                    Internal.Error("Directory not found. Retrying..");
-                    try { DeleteFullContent(destination); }
-                    catch (IOException)
-                    {
-                        Internal.Error("FAILED! PLEASE RESTART!");
-                    }
-                    Internal.Starter(this.path);
-                }
-            }
+                DeleteAllInPath(destination);
+
             else
             {
                 if (destination[destination.Length - 1] != @"\".ToCharArray()[0])
@@ -79,18 +146,7 @@ namespace SASH.IO
 
                 if (File.Exists(destination + file) && !IsFileLocked(destination + file))
                 {
-                    try
-                    {
-                        file = destination + file;
-                        File.Delete(file);
-                        Internal.Starter(this.path);
-                    }
-                    catch (IOException)
-                    {
-                        Internal.Error($"The file \"{file}\" is used by another program.");
-                        TryKill(file);
-                        Internal.Starter(this.path);
-                    }
+                    DeleteSingleFile(file, destination);
                 }
                 else
                 {
@@ -104,48 +160,6 @@ namespace SASH.IO
             }
 
             Internal.Sleep(2500);
-        }
-
-        /// <summary>
-        /// Deletes EVERYTHING in a given <paramref name="destination"/>.
-        /// </summary>
-        /// <param name="destination">The destination.</param>
-        private void DeleteFullContent(string destination)
-        {
-            var directoryInfo = new DirectoryInfo(destination);
-
-            foreach (string item in Directory.GetFiles(destination))
-                File.Delete(item);
-
-            Internal.Starter(this.path);
-        }
-
-
-        private static bool IsFileLocked(string path)
-        {
-            bool res = false;
-            FileInfo info = new FileInfo(path);
-
-            try
-            {
-                var stream = info.Open(FileMode.Open, FileAccess.ReadWrite);
-                stream.Dispose();
-            }
-            catch (IOException) { res = true; }
-            return res;
-        }
-
-        private static void TryKill(string file)
-        {
-            File.Delete(file);
-            var process = new System.Diagnostics.Process();
-            process.StartInfo.FileName = file;
-            process.Start();
-            process.WaitForExit(500); // wait a minute....
-            if (!process.HasExited)
-                process.Kill(); // *KILL IT!*
-
-            process.Dispose();
         }
     }
 }
