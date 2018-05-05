@@ -56,4 +56,11 @@ internal static class Internal
         return list;
     }
     
+    public static void Ask(string message)
+    {
+        System.Console.ForegroundColor = System.ConsoleColor.Yellow;
+        System.Console.WriteLine(message);
+        System.Console.ForegroundColor = System.ConsoleColor.Gray;
+    }
+
 }
