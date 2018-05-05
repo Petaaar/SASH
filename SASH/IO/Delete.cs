@@ -16,6 +16,10 @@ namespace SASH.IO
         private static bool CheckPath(string path)
             => Directory.Exists(path);
 
+        /// <summary>
+        /// Deletes all files in a certain path.
+        /// </summary>
+        /// <param name="path">The path.</param>
         private void DeleteAllInPath(string path)
         {
             try
@@ -34,6 +38,11 @@ namespace SASH.IO
             }
         }
 
+        /// <summary>
+        /// Deletes a single <paramref name="file"/> in a specified <paramref name="destination"/>.
+        /// </summary>
+        /// <param name="file">The file name.</param>
+        /// <param name="destination">The full path for the file.</param>
         private void DeleteSingleFile(string file, string destination)
         {
             try
@@ -50,8 +59,6 @@ namespace SASH.IO
             }
         }
 
-        
-
         /// <summary>
         /// Deletes EVERYTHING in a given <paramref name="destination"/>.
         /// </summary>
@@ -66,7 +73,11 @@ namespace SASH.IO
             Internal.Starter(this.path);
         }
 
-
+        /// <summary>
+        /// Checks if a file is locked or used by another process.
+        /// </summary>
+        /// <param name="path">Path for the file to check.</param>
+        /// <returns>boolean</returns>
         private static bool IsFileLocked(string path)
         {
             bool res = false;
@@ -81,6 +92,10 @@ namespace SASH.IO
             return res;
         }
 
+        /// <summary>
+        /// Tries to kill every process using a certain <paramref name="file"/>.
+        /// </summary>
+        /// <param name="file">The file to look for.</param>
         private static void TryKill(string file)
         {
             File.Delete(file);
@@ -93,6 +108,66 @@ namespace SASH.IO
 
             process.Dispose();
         }
+
+        /// <summary>
+        /// Deletes every file that contains a specific "<paramref name="like"/>" argument.
+        /// EXAMPLE: delete * in path where test -> "test" must be contained in every file in order it to be deleted.
+        /// </summary>
+        /// <param name="path">The path to look for.</param>
+        /// <param name="like">The specific argument.</param>
+        private void DeleteEverythingWhere(string path, string like)
+        {
+            if (CheckPath(path))
+            {
+                if (like != null || like != string.Empty || like != " ")
+                {
+                    var dirItems = Directory.GetFiles(path);
+
+                    var commonItems = new System.Collections.Generic.List<string>();
+
+                    if (dirItems.Length != 0) //empty directory
+                    {
+                        foreach (string item in dirItems)
+                            if (Path.GetFileNameWithoutExtension(item).Contains(like))
+                                commonItems.Add(item);
+                    }
+                    else Internal.Error($"The directory {path} is empty!");
+
+                    if (commonItems.Count == 0) Internal.Error($"No items with common sign \"{like}\" were found in {path}!");
+                    // at least 1 common item
+                    else
+                    {
+                        System.Console.WriteLine("MATCHING FILES FOUND!");
+
+                        Internal.Ask($"Show all {commonItems.Count} matching files?[Y/N]:"); char yn = System.Console.ReadLine().ToLower().ToCharArray()[0];
+
+                        if (yn == 'y') //if you want to see all the items
+                        {
+                            System.Console.WriteLine("FILES TO DELETE:");
+                            foreach (string item in commonItems)
+                                System.Console.WriteLine(item);
+                        }
+
+                        Internal.Ask("Are you sure you want to delete all these items?:[Y/N]"); char y = System.Console.ReadLine().ToLower().ToCharArray()[0];
+                        
+                        if (y == 'y')
+                        {
+                            foreach (string item in commonItems)
+                                File.Delete(item);
+                        }
+                    }
+                }
+                else
+                {
+                    Internal.Error("Empty \"like\" argument!");
+                    Internal.Starter(this.path);
+                }
+            }
+            else Internal.Error("The path is incorrect or does not exist!");
+
+            Internal.Starter(this.path);
+        }
+
         #endregion
         
         /// <summary>
@@ -104,11 +179,13 @@ namespace SASH.IO
             this.path = path;
 
             if (arguments.Length == 0)
-                Internal.Error("No arguments given. What to run!?");
-            if (arguments.Length <= 2 || arguments.Length > 3)
+                
+            if (arguments.Length <= 2 || arguments.Length > 5)
                 Internal.Error("Too many or too few arguments given!");
             if (arguments[1] != "in")
                 Internal.Error($"Expected keyword IN in the place of \"{arguments[1]}\".");
+            if (arguments.Length == 5 && arguments[3] != "where")
+                Internal.Error($"Expected keyword WHERE in the place of \"{arguments[3]}\".");
 
             var file = arguments[0];
             var destination = string.Empty;
@@ -136,10 +213,10 @@ namespace SASH.IO
                 Internal.Starter(this.path);
             }
 
-            if (file == "*")
+            if (file == "*" && arguments.Length == 2)
                 DeleteAllInPath(destination);
 
-            else
+            else if (arguments.Length == 2)
             {
                 if (destination[destination.Length - 1] != @"\".ToCharArray()[0])
                     destination = destination + @"\";
@@ -157,6 +234,11 @@ namespace SASH.IO
                     Internal.Starter(this.path);
                     Internal.Starter(this.path);
                 }
+            }
+
+            else if (arguments.Length == 5 && file == "*")
+            {
+                DeleteEverythingWhere(destination, arguments[4]);
             }
 
             Internal.Sleep(2500);
