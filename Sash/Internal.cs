@@ -56,10 +56,14 @@ internal static class Internal
         return list;
     }
     
+    /// <summary>
+    /// Method, suitable to "ask questions".
+    /// </summary>
+    /// <param name="message">The "question to be asked".</param>
     public static void Ask(string message)
     {
         System.Console.ForegroundColor = System.ConsoleColor.Yellow;
-        System.Console.WriteLine(message);
+        System.Console.Write(message);
         System.Console.ForegroundColor = System.ConsoleColor.Gray;
     }
 

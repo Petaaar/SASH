@@ -42,9 +42,9 @@ namespace SASH
 
             var command = commandInside[0];
 
-            commandInside.Remove(commandInside[0]);
+            commandInside.Remove(command);
 
-            switch (command)
+            switch (command.ToLower())
             {
                 case "run":
                     new Run(this.path, commandInside.ToArray());
@@ -84,7 +84,7 @@ namespace SASH
             var command = new GetCommand().ReadCommand();
             this.path = path;
 
-            Process(command.ToLower());
+            Process(command);
         }
 
         #endregion
