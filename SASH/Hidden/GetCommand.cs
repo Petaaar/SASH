@@ -9,7 +9,7 @@
             if (command.ToLower() == "" || command == string.Empty)
                 Internal.KillCmd();
             else
-                return $"{command}";
+                return command;
 
             Internal.KillCmd(); //kill the CMD
             return ""; // just to have "return";
