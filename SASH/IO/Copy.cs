@@ -1,7 +1,7 @@
 ﻿using SASH.Hidden;
 using System.IO;
 
-namespace Sash.IO
+namespace SASH.IO
 {
     /// <summary>
     /// Class, responsible for copying a files to/from location.
@@ -21,7 +21,17 @@ namespace Sash.IO
         /// <param name="file">File to copy.</param>
         private void CopySingleFile(string file)
         {
+            if (file != string.Empty && file != " ")
+            {
+                try
+                {
+                    File.Copy(file, Path.GetFileName(file));
+                }
+                catch (IOException) { Internal.Error($"File already exists in path \"{this.path}\"."); }
+            }
+            else Internal.Error("Empty file argument!");
 
+            Internal.Starter(this.path);
         }
 
         /// <summary>
@@ -31,7 +41,25 @@ namespace Sash.IO
         /// <param name="pathTo">A path to where to copy the file.</param>
         private void CopySingleFile(string file,string pathTo)
         {
+            if (file != string.Empty && file != " ")
+            {
+                if (pathTo != string.Empty && pathTo != " ")
+                {
+                    try
+                    {
+                        if (File.Exists(Path.Combine(Path.GetFileName(file),file)))
+                            if (Directory.Exists(pathTo))
+                                File.Copy(file, pathTo + Path.GetFileName(file));
+                            else Internal.Error($"Directory \"{pathTo}\" does not exist!");
+                        else Internal.Error($"File path \"{file}\" does not exist!");
+                    }
+                    catch (IOException e) { Internal.Error($"{e.Message}"); }
+                }
+                else Internal.Error("Empty path argument!");
+            }
+            else Internal.Error("Empty file argument!");
 
+            Internal.Starter(this.path);
         }
 
         /// <summary>
@@ -77,21 +105,20 @@ namespace Sash.IO
             //file in directory
             if (arguments.Length == 3)
             {
-                
+
                 if (arguments[1] == "in" && arguments[0] != "-d")
                 {
                     if (arguments[2] != string.Empty && arguments[2] != " ")
                     {
-                        if (Directory.Exists(file))
-                            if (Directory.Exists(directory))
-                                CopySingleFile(file, directory);
-                            else Internal.Error($"Directory \"{directory}\" does not exist!");
-                        else Internal.Error($"File \"{file}\" does not exist!");
+                        file = arguments[0];
+                        directory = arguments[2];
+                        
+                        CopySingleFile(file, directory);
+
                     }
                     else Internal.Error("Empty directory argument!");
                 }
-
-
+                else Internal.Error($"Expected keyword \"IN\" in the place of \"{arguments[1]}\"!");
             }
             
             //-d directory
@@ -124,6 +151,8 @@ namespace Sash.IO
                 }
                 else Internal.Error("Empty DIRECTORY or ANOTHER_DIRECTPRY argument!");
             }
+
+            Internal.Starter(this.path);
         }
     }
 }
