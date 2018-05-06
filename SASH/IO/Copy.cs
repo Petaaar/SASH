@@ -53,7 +53,7 @@ namespace SASH.IO
                             else Internal.Error($"Directory \"{pathTo}\" does not exist!");
                         else Internal.Error($"File path \"{file}\" does not exist!");
                     }
-                    catch (IOException e) { Internal.Error($"{e.Message}"); }
+                    catch (IOException e) { Internal.Error($"EXCEPTION:{e.Message}!"); }
                 }
                 else Internal.Error("Empty path argument!");
             }
@@ -63,24 +63,77 @@ namespace SASH.IO
         }
 
         /// <summary>
-        /// Copies a <paramref name="directory"/> in the boot one.
+        /// Copies a <paramref name="directory"/> in the boot one. RECURSIVE.
         /// </summary>
         /// <param name="directory">Directory to copy.</param>
         private void CopyDir(string directory)
         {
+            if (directory != string.Empty && directory != " ")
+            {
+                var files = System.Array.Empty<string>();
 
+                if (!Directory.Exists(directory))
+                    Internal.Error($"Directory \"{directory}\" does not exist!");
+                files = Directory.GetFileSystemEntries(directory);
+
+                foreach (string subElement in files)
+                { 
+                    if (Directory.Exists(subElement))
+                        CopyDir(subElement);
+                    else if (!File.Exists(this.path + Path.GetFileName(subElement)))
+                    {
+                        try
+                        {
+                            File.Copy(subElement, this.path + Path.GetFileName(subElement));
+                        }
+                        catch (IOException e) { Internal.Error($"AN ERROR OCCURRED:{e.Message}"); }
+                    }
+                }
+            }
+            else Internal.Error("Empty directory argument!");
+
+            Internal.Starter(this.path);
         }
 
         /// <summary>
         /// Copies a <paramref name="directory"/> 
-        /// in another specified <paramref name="newDirectory"/>.
+        /// in another specified <paramref name="newDirectory"/>. RECURSIVE!
         /// </summary>
         /// <param name="directory">Directory to be copied.</param>
         /// <param name="newDirectory">Directory to copy the <paramref name="directory"/> to.</param>
         private void CopyDir(string directory, string newDirectory)
         {
+            if (directory != " " && directory != string.Empty)
+            {
+                if (newDirectory != " " && newDirectory != string.Empty)
+                {
+                    var files = System.Array.Empty<string>();
 
+                    if (newDirectory[newDirectory.Length - 1] != Path.DirectorySeparatorChar)
+                        newDirectory += Path.DirectorySeparatorChar;
+                    if (!Directory.Exists(newDirectory))
+                        Internal.Error($"The directory \"{newDirectory}\" does not exist!");
+                    files = Directory.GetFileSystemEntries(directory);
+
+                    foreach (string subElement in files)
+                    {
+                        if (Directory.Exists(subElement))
+                            CopyDir(subElement, newDirectory + Path.GetFileName(subElement));
+                        else if (!File.Exists(newDirectory + Path.GetFileName(subElement)))
+                        {
+                            try
+                            {
+                                File.Copy(subElement, newDirectory + Path.GetFileName(subElement));
+                            }
+                            catch (IOException e) { Internal.Error($"AN ERROR OCCURRED:{e.Message}"); }
+                        }
+                    }
+                }
+                else Internal.Error("Empty newDirectory argument!");
+            }
+            else Internal.Error("Empty directory argument!");
         }
+
         #endregion
 
         /// <summary>
@@ -99,8 +152,6 @@ namespace SASH.IO
             if (arguments.Length == 0) Internal.Error("No arguments given to the command!");
             //file
             if (arguments.Length == 1) CopySingleFile(arguments[0]);
-
-            if (arguments.Length == 2) Internal.Error("Too many or too much arguments given!");
             
             //file in directory
             if (arguments.Length == 3)
@@ -126,6 +177,8 @@ namespace SASH.IO
             {
                 if (arguments[0] == "-d" && arguments[1] != "in")
                 {
+                    directory = arguments[1];
+
                     if (arguments[1] != " " && arguments[1] != string.Empty)
                     {
                         if (Directory.Exists(directory))
@@ -141,11 +194,12 @@ namespace SASH.IO
             {
                 if ((arguments[1] != " " && arguments[3] != " ") && (arguments[1] != string.Empty && arguments[3] != string.Empty))
                 {
+                    directory = arguments[1];
+                    anotherDirectory = arguments[3];
+
                     if (Directory.Exists(directory))
                         if (Directory.Exists(anotherDirectory))
-                            if (Directory.Exists(Path.Combine(anotherDirectory, directory)))
-                                Internal.Error($"{directory} exists in {anotherDirectory}!");
-                            else CopyDir(directory, anotherDirectory);
+                            CopyDir(directory, anotherDirectory);
                         else Internal.Error($"Directory {anotherDirectory} does not exist!");
                     else Internal.Error($"Directory {directory} does not exist!");
                 }
