@@ -62,6 +62,9 @@ namespace SASH
                     try { Console.Clear(); Internal.Starter(this.path); }
                     catch (System.ComponentModel.Win32Exception) { Internal.KillCmd(); }
                     break;
+                case "copy":
+                    new Copy(this.path, commandInside.ToArray());
+                    break;
                 default:
                     Internal.Error($"Unrecognized command \"{command}\"!");
                     Internal.Starter(this.path);
