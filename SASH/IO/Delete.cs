@@ -298,7 +298,8 @@ namespace SASH.IO
             else if (arguments.Length == 3)
             {
                 file = arguments[0];
-                destination = nameof(this.path);
+                if (arguments[2] == " " || arguments[2] == string.Empty) destination = nameof(path);
+                else destination = arguments[2];
 
                 DeleteSingleFile(file, path);
 
