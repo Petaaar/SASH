@@ -58,6 +58,11 @@ namespace SASH.IO
                 TryKill(file);
                 Internal.Starter(this.path);
             }
+            catch (System.NotSupportedException)
+            {
+                Internal.Error($"Could not delete \"{file}\"; Not supported :(");
+                Internal.Starter(this.path);
+            }
         }
 
         /// <summary>
