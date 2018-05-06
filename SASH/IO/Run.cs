@@ -29,7 +29,7 @@ namespace SASH.IO
                 windowStyle = arguments[1];
             }
             else if (arguments.Length == 1) programName = arguments[0];
-
+            else Internal.Error("Too much arguments given!");
 
             //run the program specified
             var process = new Process();
@@ -59,7 +59,7 @@ namespace SASH.IO
             {
                 process.Start();
             }
-            catch (InvalidOperationException) { Internal.KillCmd(); }
+            catch (InvalidOperationException) { Internal.Error($"Could not start the program {programName}."); }
 
             catch (System.ComponentModel.Win32Exception)
             { Internal.Error($"The program \"{programName}\" cannot be found or does not exists!"); }
