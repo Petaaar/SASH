@@ -289,8 +289,19 @@ namespace SASH.IO
 
                     File.Delete(file);
                     Internal.Starter(this.path);
-                    Internal.Starter(this.path);
                 }
+
+                Internal.Starter(this.path);
+            }
+
+            //delete file in path
+            else if (arguments.Length == 3)
+            {
+                file = arguments[0];
+                destination = nameof(this.path);
+
+                DeleteSingleFile(file, path);
+
             }
 
             else if (arguments.Length == 5 && file == "*")
@@ -300,7 +311,7 @@ namespace SASH.IO
             else if (arguments.Length == 6 && (file == "*" && arguments[4] == "is"))
                 DeleteEverythingWhereMatches(destination, arguments[5]);
 
-            Internal.Sleep(2000);
+            Internal.Starter(this.path);
         }
     }
 }
