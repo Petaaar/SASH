@@ -1,7 +1,7 @@
 ﻿
 # SASH.IO namespace.
 
-### In this namespace are contained a number of commands for creating, destroying, and running external files / programs.
+### In this namespace are contained a number of commands(separated in different classes) for creating, destroying, and running external files / programs.
 
 ### Currently added commands:
 1. RUN Program <WindowStyle> -> Runs a program. Via the command the program window can be modified as follows:  
@@ -39,3 +39,16 @@ Where the __*FILE*__ is a full file name with it's extension.
 The __*FOLDER*__ is the path, where we will delete a given file. 
 
 If the __*FILE*__ __does__ exsist in the specified __*FOLDER*__ you'll get __ERROR__ message.  
+
+4. COPY -> copyes a file/directory from one place to another. 
+```  
+copy FILE  
+copy FILE in DIRECTORY  
+copy -d DIRECTORY  
+copy -d DIRECTORY in ANOTHER_DIRECTORY  
+```  
+If FILE __doesn't exist__ you will get __error__ message.  
+If FILE __exists__ in DIRECTORY you will get __error__ message. If there's no specified directory the file will be copyed in the __boot directory__.  
+If DIRECTORY __doesn't exist__ or is empty you will get __error__ message.  
+If DIRECTORY __exists__ in ANOTHER_DIRECTORY you will get __error__ message. If there's no specified directory the file will be copyed in the __boot directory__.  
+
