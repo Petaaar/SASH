@@ -25,7 +25,7 @@ namespace SASH
         /// <returns>boolean</returns>
         private static bool CheckPath(string path)
             => Directory.Exists(path);
-        
+
         /// <summary>
         /// Processes a given <paramref name="commandFull"/> specified.
         /// </summary>
@@ -71,7 +71,7 @@ namespace SASH
                     break;
             }
         }
-        
+
         #endregion
 
         #region Public
@@ -81,7 +81,7 @@ namespace SASH
             new Starter(@"C:\Users\petar\source\repos\Sash\Sash\files\");
         }
 
-        
+
         public Starter(string path)
         {
             var command = new GetCommand().ReadCommand();
