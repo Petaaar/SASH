@@ -13,13 +13,19 @@ All commands are separated in different folders(namespaces), so everybody can ea
 > For fast navigation to there click [here](https://github.com/Petaaar/SASH/blob/master/SASH/IO/).  
 
 ```  
-1. RUN, DELETE, CREATE command specs are in the SASH.IO folder.  
+1. RUN, DELETE, CREATE, COPY command specs are in the SASH.IO folder.  
 
 2. CLEAR -> Clears the console.  
 
 3. EXIT -> Kills the program. Determines all processes, connected to it.
+
 ```  
 
 The [SASH.IO](https://github.com/Petaaar/SASH/blob/master/SASH/IO/) folder contains a number of commands, useful for 
 creating, deleting and running an external programs / files.
+
+###### "Hidden" folder  
+> For fast navigation to there click [here](https://github.com/Petaaar/SASH/tree/master/SASH/Hidden).  
+
+The [Hidden](https://github.com/Petaaar/SASH/tree/master/SASH/Hidden) folder contains the structures, controlling the program - the [Internal](https://github.com/Petaaar/SASH/blob/master/SASH/Hidden/Internal.cs) class and the [GetCommand](https://github.com/Petaaar/SASH/blob/master/SASH/Hidden/GetCommand.cs) struct.
 
