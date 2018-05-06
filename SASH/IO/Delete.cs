@@ -270,7 +270,7 @@ namespace SASH.IO
                 Internal.Starter(this.path);
             }
 
-            if (file == "*" && arguments.Length == 2)
+            if (file == "*" && arguments.Length == 3)
                 DeleteAllInPath(destination);
 
             else if (arguments.Length == 2)
