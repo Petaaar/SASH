@@ -14,7 +14,9 @@
                 {"copy","=> Copies a file/directory in another/the boot directory."},
                 {"create","=> Creates a new file(s) in a specified/the boot directory."},
                 {"delete","=> Deletes a file(s)/directory in a specified/the boot directory"},
-                {"run","=> Starts a new process to run an external application."}
+                {"run","=> Starts a new process to run an external application."},
+                {"clear","=> Clears the console."},
+                {"exit","\"Kills\" the program."}
             };
 
         /// <summary>
