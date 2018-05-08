@@ -12,7 +12,7 @@ namespace SASH
     {
         #region Fields & Encapsulation
 
-        private readonly string path;
+        private string path;
 
         #endregion
 
@@ -32,7 +32,7 @@ namespace SASH
         /// <param name="commandFull">The command.</param>
         private void Process(string commandFull)
         {
-            if (!CheckPath(this.path)) throw new ArgumentException(this.path);
+            if (!CheckPath(this.path)) Internal.Error($"The path \"{this.path}\" does not exist!");
 
             var commandArr = commandFull.Split(new char[] { ' ' }, StringSplitOptions.None);
             var commandInside = new System.Collections.Generic.List<string>();
@@ -72,6 +72,26 @@ namespace SASH
             }
         }
 
+        /// <summary>
+        /// Saves the boot path in c:\Users\Public\pathKeeper.txt"
+        /// </summary>
+        /// <param name="path">the boot path</param>
+        private void SavePath(string path)
+        {
+            var currentPath = string.Empty;
+
+            using (StreamReader reader = new StreamReader(@"C:\Users\Public\pathKeeper.txt"))
+                 currentPath = reader.ReadLine();
+
+            if (path == currentPath) return;
+
+            using (StreamWriter writer = new StreamWriter(@"C:\Users\Public\pathKeeper.txt"))
+                writer.WriteLine(path);
+
+
+            this.path = path; //save the new path if new.
+        }
+
         #endregion
 
         #region Public
@@ -84,8 +104,12 @@ namespace SASH
 
         public Starter(string path)
         {
+            if (!File.Exists(@"C:\Users\Public\pathKeeper.txt"))
+                File.Create(@"C:\Users\Public\pathKeeper.txt");
+
             var command = new GetCommand().ReadCommand();
-            this.path = path;
+
+            SavePath(path);
 
             Process(command);
         }
