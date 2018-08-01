@@ -6,7 +6,7 @@ namespace SASH.IO
     class Delete
     {
         #region Private
-        
+
         private string path;
 
         /// <summary>
@@ -155,7 +155,7 @@ namespace SASH.IO
                         }
 
                         Internal.Ask("Are you sure you want to delete all these items?:[Y/N]"); char y = System.Console.ReadLine().ToLower().ToCharArray()[0];
-                        
+
                         if (y == 'y')
                         {
                             foreach (string item in commonItems)
@@ -226,7 +226,7 @@ namespace SASH.IO
         }
 
         #endregion
-        
+
         /// <summary>
         /// Deletes s file or many files in a specified or the current directory.
         /// </summary>
@@ -240,8 +240,14 @@ namespace SASH.IO
                 Internal.Error("Empty arguments!");
                 Internal.Starter(this.path);
             }
-            if (arguments.Length <= 2 || arguments.Length > 6)
+            if ((arguments.Length <= 2 || arguments.Length > 6) && arguments[0] != "-h")
                 Internal.Error("Too many or too few arguments given!");
+            if (arguments.Length == 1 && arguments[0] == "-h")
+            {
+                new Help("delete");
+                Internal.Starter(this.path);
+            }
+            else Internal.Error("Too few arguments given!");
             if (arguments[1] != "in")
                 Internal.Error($"Expected keyword IN in the place of \"{arguments[1]}\".");
             if (arguments.Length == 5 && arguments[3] != "where")
@@ -277,7 +283,7 @@ namespace SASH.IO
 
             if (file == "*" && arguments.Length == 3)
                 DeleteAllInPath(destination);
-
+            //delete file
             else if (arguments.Length == 2)
             {
                 if (destination[destination.Length - 1] != @"\".ToCharArray()[0])

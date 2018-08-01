@@ -151,7 +151,8 @@ namespace SASH.IO
 
             if (arguments.Length == 0) Internal.Error("No arguments given to the command!");
             //file
-            if (arguments.Length == 1) CopySingleFile(arguments[0]);
+            if (arguments.Length == 1 && arguments[0] != "-h") CopySingleFile(arguments[0]);
+            else if (arguments.Length == 1 && arguments[0] == "-h") new Help("copy"); 
             
             //file in directory
             if (arguments.Length == 3)

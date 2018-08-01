@@ -22,7 +22,8 @@ namespace SASH.IO
             string[] filesArr = Array.Empty<string>();
             int argsLen = arguments.Length;
 
-            if (argsLen == 1) filename = arguments[0];
+            if (argsLen == 1 && arguments[0] != "-h") filename = arguments[0];
+            else if (argsLen == 1 && arguments[0] == "-h") new Help("create");
 
             if (argsLen == 3 && arguments[1] == "in")
             {

@@ -28,7 +28,9 @@ namespace SASH.IO
                 programName = arguments[0];
                 windowStyle = arguments[1];
             }
-            else if (arguments.Length == 1) programName = arguments[0];
+
+            else if (arguments.Length == 1 && arguments[0] != "-h") programName = arguments[0];
+            else if (arguments.Length == 1 && arguments[0] == "-h") new Help("run");
             else Internal.Error("Too much arguments given!");
 
             //run the program specified
@@ -57,7 +59,8 @@ namespace SASH.IO
 
             try
             {
-                process.Start();
+                if (arguments[0] != "-h")
+                    process.Start();
             }
             catch (InvalidOperationException) { Internal.Error($"Could not start the program {programName}."); }
 
