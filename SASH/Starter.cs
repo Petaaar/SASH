@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using SASH;
 using SASH.IO;
 using SASH.Hidden;
 
@@ -65,6 +66,9 @@ namespace SASH
                 case "copy":
                     new Copy(this.path, commandInside.ToArray());
                     break;
+                case "append":
+                    new Append(this.path, commandInside.ToArray());
+                    break;
                 default:
                     Internal.Error($"Unrecognized command \"{command}\"!");
                     Internal.Starter(this.path);
@@ -83,7 +87,7 @@ namespace SASH
             using (StreamReader reader = new StreamReader(@"C:\Users\Public\pathKeeper.txt"))
                  currentPath = reader.ReadLine();
 
-            if (path == currentPath) return;
+            if (path == currentPath) this.path = path;
 
             using (StreamWriter writer = new StreamWriter(@"C:\Users\Public\pathKeeper.txt"))
                 writer.WriteLine(path);
