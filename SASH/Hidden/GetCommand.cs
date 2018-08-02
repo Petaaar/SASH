@@ -1,5 +1,8 @@
 ﻿namespace SASH.Hidden
 {   
+    /// <summary>
+    /// Represents a way to get a command from the STDIO.
+    /// </summary>
     public struct GetCommand
     {
         public string ReadCommand()

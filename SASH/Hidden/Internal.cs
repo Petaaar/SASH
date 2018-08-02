@@ -39,6 +39,9 @@
         public static SASH.Starter Starter(string path) 
             => new SASH.Starter(path);
 
+        public static SASH.Starter Starter()
+            => new Starter(@"C:\Users\petar\source\repos\Sash\Sash\files\");
+
         /// <summary>
         /// A simple extension method to the ARRAYS. 
         /// Converts T array to a <see cref="System.Collections.Generic.List{T}"/>.

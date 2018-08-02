@@ -1,8 +1,9 @@
 ﻿using System;
 using System.IO;
-using SASH;
 using SASH.IO;
 using SASH.Hidden;
+
+//2542 lines of code. Stage: not even close to finished. Date: 2.08.2018.
 
 namespace SASH
 {
@@ -67,7 +68,7 @@ namespace SASH
                     new Copy(this.path, commandInside.ToArray());
                     break;
                 case "append":
-                    new Append(this.path, commandInside.ToArray());
+                    new Append(this.path, commandInside[0]);
                     break;
                 default:
                     Internal.Error($"Unrecognized command \"{command}\"!");
@@ -99,6 +100,11 @@ namespace SASH
         #endregion
 
         #region Public
+
+        public string Path
+        {
+            get => path;
+        }
 
         static void Main()
         {

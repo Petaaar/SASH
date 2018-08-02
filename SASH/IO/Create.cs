@@ -4,9 +4,12 @@ using SASH.Hidden;
 
 namespace SASH.IO
 {
+    /// <summary>
+    /// Class that creates files/folders.
+    /// </summary>
     class Create
     {
-        private string path;
+        private readonly string path;
 
         /// <summary>
         /// Creates a file / folder in the given in the <paramref name="arguments"/> directory.

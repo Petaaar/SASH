@@ -3,6 +3,9 @@ using SASH.Hidden;
 
 namespace SASH.IO
 {
+    /// <summary>
+    /// Abstraction that represents deletion of files, folders and directory trees. See documentation for more
+    /// </summary>
     class Delete
     {
         #region Private

@@ -4,7 +4,10 @@ using SASH.Hidden;
 
 namespace SASH.IO
 {
-    class Run
+    /// <summary>
+    /// Starts a new file/website/application window.
+    /// </summary>
+    public struct Run
     {
         private string path;
 
