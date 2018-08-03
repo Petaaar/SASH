@@ -42,7 +42,7 @@ namespace XMLParser
 
         private static uint publicMethodsIteration;
         
-        private static string classType = XMLParser.ClassType;
+        private static readonly string classType = XMLParser.ClassType;
 
         private static System.Collections.Specialized.StringCollection inheritsList;
 
@@ -124,7 +124,7 @@ namespace XMLParser
                                 var builder = new System.Text.StringBuilder();
                                 builder.Append(item.Remove(item.Length - 5, 5) + doubleTab + " : ");
                                 for (int i = 0; i < inheritsList.Count; i++)
-                                    if (inheritsList[i] != null && inheritsList[i] != string.Empty)
+                                    if (!System.String.IsNullOrEmpty(inheritsList[i]) && !System.String.IsNullOrEmpty(inheritsList[i]))
                                         if (inheritsList[i] != inheritsList[inheritsList.Count - 1])
                                             builder.Append($"{inheritsList[i]}, ");
                                         else builder.Append(inheritsList[i]);
@@ -165,7 +165,7 @@ namespace XMLParser
                                         foreach (string field in forEncapsulation)
                                         {
                                             var encapsulatedField = Encapsulator.Encapsulate(field);
-                                            if (encapsulatedField != string.Empty)
+                                            if (!System.String.IsNullOrEmpty(encapsulatedField))
                                             {
                                                 writer.WriteLine(encapsulatedField);
                                                 writer.WriteLine();
@@ -403,7 +403,7 @@ namespace XMLParser
                 var list = new System.Collections.Generic.List<string>(); //too lazy to write ToArray() method for StringCollection..
 
                 foreach (string innerItem in properties)
-                    if (innerItem == string.Empty)
+                    if (System.String.IsNullOrEmpty(innerItem))
                         continue;
                     else list.Add(innerItem);
 
@@ -416,7 +416,7 @@ namespace XMLParser
                
                 if (props.Length == 2)
                 {
-                    if (props[1] == string.Empty) throw new System.ArgumentException("EMPTY CLASS NAME!");
+                    if (System.String.IsNullOrEmpty(props[1])) throw new System.ArgumentException("EMPTY CLASS NAME!");
                     else if (props[0] == "private" || props[0] == "public" || props[0] == "internal")
                         return Class(props[0], props[1]); // public class className
                     else if (props[0] == "static" || props[0] == "sealed" || props[0] == "abstract")

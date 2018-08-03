@@ -319,7 +319,7 @@ namespace XMLParser
 
             var path = "";
 
-            if (pathGiven == "" & !given)
+            if (System.String.IsNullOrEmpty(pathGiven) & !given)
                 path = Console.ReadLine();
             else path = pathGiven;
 
@@ -406,7 +406,7 @@ namespace XMLParser
             if (root is XmlElement)
             {
                 var searchRes = Search(root);
-                if (searchRes != string.Empty)
+                if (!System.String.IsNullOrEmpty(searchRes))
                     if (!searchRes.StartsWith(tab) && !searchRes.StartsWith("namespace"))
                         xmlContent.Add(tab + searchRes);
                     else xmlContent.Add(searchRes);
