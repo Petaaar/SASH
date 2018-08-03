@@ -29,3 +29,10 @@ creating, deleting and running an external programs / files.
 
 The [Hidden](https://github.com/Petaaar/SASH/tree/master/SASH/Hidden) folder contains the structures, controlling the program - the [Internal](https://github.com/Petaaar/SASH/blob/master/SASH/Hidden/Internal.cs) class and the [GetCommand](https://github.com/Petaaar/SASH/blob/master/SASH/Hidden/GetCommand.cs) struct.
 
+###### "Parser" folder
+> For fast navigation to there click [this](https://github.com/Petaaar/SASH/tree/master/SASH/Parser).
+
+The [Parser](https://github.com/Petaaar/SASH/tree/master/SASH/Parser) folder is just a slightly-simplified version of the [XMLParser](https://github.com/Petaaar/xmlparser) project.  
+It works with the "append" command, traverses a __.sashs__ file and outputs an automatically generated __*C# class*__.    
+
+For more info go to the XMLParser page in my [GitHub profile](https://github.com/Petaaar) or click [here](https://github.com/Petaaar/xmlparser).
