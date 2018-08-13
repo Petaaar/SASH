@@ -3,8 +3,7 @@ using System.IO;
 using SASH.IO;
 using SASH.Hidden;
 
-//2542 lines of code. Stage: not even close to finished. Date: 2.08.2018.
-
+//COUNT OF LINES:2757. Date:12.8.2018, 19:00. Stage: Not even close to finished.
 namespace SASH
 {
     /// <summary>
@@ -70,11 +69,42 @@ namespace SASH
                 case "append":
                     new Append(this.path, commandInside[0]);
                     break;
+                case "list":
+                    try { new Lister(this.path, commandInside[0]); }
+                    catch (System.IndexOutOfRangeException) { Internal.Starter(this.path); }
+                    catch (System.ArgumentOutOfRangeException) { Internal.Starter(this.path); }
+                    break;
+                case "ls":
+                    try { new Lister(this.path, commandInside[0]); }
+                    catch (System.IndexOutOfRangeException) { Internal.Starter(this.path); }
+                    catch (System.ArgumentOutOfRangeException) { Internal.Starter(this.path); }
+                    break;
+                case "cd":
+                    ChangePath(commandInside[0]);
+                    break;
                 default:
                     Internal.Error($"Unrecognized command \"{command}\"!");
                     Internal.Starter(this.path);
                     break;
             }
+        }
+
+        private void ChangePath(string newPath)
+        {
+            try
+            {
+                if (!CheckPath(newPath))
+                {
+                    Internal.Error("This path does not exist or is invalid!");
+                    Internal.Starter(this.path);
+                }
+                else
+                    try { this.path = newPath; SavePath(this.path); }
+                    catch (System.IO.IOException) { Internal.Error($"Invalid directory name \"{newPath}\"!"); Internal.Starter(this.path); }
+                Internal.Starter(this.path);
+            }
+            catch (System.ComponentModel.Win32Exception) { Internal.Error($"Cannot change directory to \"{newPath}\"."); Internal.Starter(this.path); }
+            catch (System.UnauthorizedAccessException) { Internal.Error($"Unauthorized access to \"{newPath}\"!"); Internal.Starter(this.path); }
         }
 
         /// <summary>
@@ -117,6 +147,7 @@ namespace SASH
             if (!File.Exists(@"C:\Users\Public\pathKeeper.txt"))
                 File.Create(@"C:\Users\Public\pathKeeper.txt");
 
+            Console.Write("SASH:");
             var command = new GetCommand().ReadCommand();
 
             SavePath(path);

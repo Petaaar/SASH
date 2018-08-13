@@ -3,15 +3,18 @@ Author: Petar Angelov (Petaaar). GitHub: https://github.com/Petaaar.
 The project source code: https://github.com/Petaaar/XMLParser.
 Thanks for using my parser!*/
 namespace SASH.Custom
-{ 
+{
     #region Dependencies
     //this region contains all assembly references used in the class
     using SASH;
+    using SASH.Hidden;
+    using System.Collections;
 
     #endregion Dependencies
 
     ///<summary>A class, generated automatically via XMLParser. WRITE YOUR SUMMARY HERE!</summary>
     class TestingClass1
+         : CollectionBase, ICollection
     {
         #region Private Fields
 
@@ -21,7 +24,19 @@ namespace SASH.Custom
         #endregion Private Fields
 
         ///<summary>Constructor. Generates a new instance of the class.</summary>
+        public TestingClass1()
+        {
+            System.Console.WriteLine("Hello from base!");
+        }
+
+        ///<summary>Constructor. Generates a new instance of the class.</summary>
         public TestingClass1(string something)
+        {
+        //Write your code here!
+        }
+
+        ///<summary>Constructor. Generates a new instance of the class.</summary>
+        public TestingClass1(Help helpForMe)
         {
         //Write your code here!
         }
