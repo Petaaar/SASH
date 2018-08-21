@@ -15,6 +15,6 @@ __*os env var create [VARIABLE_NAME] [VARIABLE_VALUE]*__ -> Creates an environme
 __*os env var create [VARIABLE_NAME] [VARIABLE_VALUE] [TARGET]*__ -> Creates an environment variable with the specified name, value and target(either mashine, process or user).    
 
 ##### Example usage:
-__os env var path__ -> Displays __*every*__ value of the corresponding variable name, "path" in this case.
-__os env var create MY_VAR c:\Users\Public__ -> Creates environment variable MY_VAR with the value of "C:\Users\Public" and the current __*user*__ as a target.
+__os env var path__ -> Displays __*every*__ value of the corresponding variable name, "path" in this case.  
+__os env var create MY_VAR c:\Users\Public__ -> Creates environment variable MY_VAR with the value of "C:\Users\Public" and the current __*user*__ as a target.  
 __os env var create MY_VAR c:\Users\Public machine__ ->Creates environment variable MY_VAR with the value of "C:\Users\Public" and the current __*machine*__ as a target.
