@@ -40,5 +40,25 @@ namespace SASH.OS
             }
             else System.Console.WriteLine(outp);
         }
+
+        /// <summary>
+        /// Creates an environment variable by given <paramref name="name"/>, <paramref name="value"/> and optionally - <paramref name="target"/>.
+        /// </summary>
+        /// <param name="name">The name of the environment variable.</param>
+        /// <param name="value">The value of the environment variable.</param>
+        /// <param name="target">The <see cref="System.EnvironmentVariableTarget"/> of the variable.</param>
+        internal static void CreateEnvironmentVariable(string name, string value, System.EnvironmentVariableTarget target = System.EnvironmentVariableTarget.User)
+        {
+            try
+            {
+                System.Environment.SetEnvironmentVariable(name, value, target);
+            }
+            catch(System.Exception)
+            {
+                Internal.Error($"Cannot create environment variable with name {name} and value {value} due to exception.");
+            }
+        }
     }
+
+    
 }

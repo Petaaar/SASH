@@ -42,3 +42,9 @@ For more info go to the XMLParser page in my [GitHub profile](https://github.com
 > For fast navigation to there click [this](https://github.com/Petaaar/SASH/tree/master/SASH/Custom).
 
 Uses the files in the [Parser](https://github.com/Petaaar/SASH/tree/master/SASH/Parser) folder and the [XMLParser](https://github.com/Petaaar/xmlparser) project to auto-generate and write a custom __.CS__ files.
+
+
+###### "Os" folder
+> For fast navigation to there click [here](https://github.com/Petaaar/SASH/blob/master/SASH/OS/).
+
+The [OS](https://github.com/Petaaar/SASH/blob/master/SASH/OS/) folder contains classes and methods to costruct and/or modify environment variables, threads and more. Main class - [OS](https://github.com/Petaaar/SASH/blob/master/SASH/OS/Os.cs).cs

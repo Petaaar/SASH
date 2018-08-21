@@ -2,6 +2,7 @@
 using System.IO;
 using SASH.IO;
 using SASH.Hidden;
+using SASH.OS;
 
 //COUNT OF LINES:2757. Date:12.8.2018, 19:00. Stage: Not even close to finished.
 namespace SASH
@@ -57,7 +58,7 @@ namespace SASH
                     new Create(this.path, commandInside.ToArray());
                     break;
                 case "exit":
-                    Environment.Exit(0);
+                    Internal.KillCmd();
                     break;
                 case "clear":
                     try { Console.Clear(); Internal.Starter(this.path); }
@@ -81,6 +82,9 @@ namespace SASH
                     break;
                 case "cd":
                     ChangePath(commandInside[0]);
+                    break;
+                case "os":
+                    new Os(this.path, commandInside.ToArray());
                     break;
                 default:
                     Internal.Error($"Unrecognized command \"{command}\"!");
@@ -146,8 +150,8 @@ namespace SASH
         {
             if (!File.Exists(@"C:\Users\Public\pathKeeper.txt"))
                 File.Create(@"C:\Users\Public\pathKeeper.txt");
-
-            Console.Write("SASH:");
+            
+            Console.Write("SASH: ");
             var command = new GetCommand().ReadCommand();
 
             SavePath(path);
