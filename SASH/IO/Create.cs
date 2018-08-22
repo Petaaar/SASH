@@ -43,10 +43,36 @@ namespace SASH.IO
                 else
                 {
                     Internal.Error("Destination does not exist!");
-                    //TODO: CREATING A NEW DESTINATION!!!
                     Internal.Starter(this.path);
                 }
             }
+
+            if (argsLen == 4 && arguments[2] == "in") //create -d DIRNAME in DEST
+            {
+                var dir = arguments[1];
+                var dest = arguments[3];
+
+                if (dest == nameof(path))
+                    dest = path;
+
+                if (Directory.Exists(Path.Combine(dest, dir)))
+                {
+                    Internal.Error("This folder exists in the given path!");
+                    Internal.Starter(this.path);
+                }
+
+                try
+                {
+                    Directory.CreateDirectory(Path.Combine(dest, dir));
+                }
+                catch(IndexOutOfRangeException) { ; }
+                catch(UnauthorizedAccessException)
+                {
+                    Internal.Error($"Could not create directory \"{dir}\" in \"{dest}\" due to unauthorized access to that folder!");
+                    Internal.Starter(this.path);
+                }
+            }
+
 
             if (destination == nameof(path) || argsLen == 1)
                 destination = this.path;
@@ -110,7 +136,7 @@ namespace SASH.IO
         /// <param name="argument"></param>
         /// <returns>boolean</returns>
         private static bool IsListOfFiles(string argument)
-            => argument[0] == '{' & argument[argument.Length - 1] == '}';
+            => argument[0] == '{' && argument[argument.Length - 1] == '}';
 
     }
 }

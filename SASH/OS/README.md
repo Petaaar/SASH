@@ -8,6 +8,8 @@ __*os -curpath*__ -> Shows the current path of the executable.
 __*os -curthread*__ -> Shows the current thread __id__.  
 __*os -bit*__ -> Shows the bits of your operation system(either 32 or 64).  
 
+__*os mkd DIRNAME*__ -> Creates a directory in the boot directory.   
+
 ##### os env commands:
 The "env" sub-command works in conjunction with the [Environments](https://github.com/Petaaar/SASH/blob/master/SASH/OS/Environments.cs) class in order ot modify environment variables.  
 __*os env var [VARIABLE_NAME]*__ -> Shows the value of the given variable name.  

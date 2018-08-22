@@ -25,33 +25,58 @@ namespace SASH.OS
             Internal.Starter(this.path);
         }
 
+        /// <summary>
+        /// Parses multiple arguments within the command.
+        /// </summary>
         private void ParseArgs()
         {
             if (this.arguments != null && this.arguments.Length > 1)
             {
-                if (this.arguments[0].Equals("env"))
+                switch (arguments[0])
                 {
-                    switch (arguments[1])
-                    {
-                        case "var": 
+                    case "env": //os env
+                        {
+                            switch (arguments[1])
                             {
-                                if (arguments[2] != "create")//os env var {VARNAME}
-                                    Environments.GetEnvironmentVariableValue(arguments[2]);
-                                else // os env var create {VARNAME} {VALUE}
-                                {
-                                    if (arguments[5] != null) // os env var create {VARNAME} {VALUE} {TARGET(default = user)}
-                                        if (arguments[5] == "machine")
-                                            Environments.CreateEnvironmentVariable(arguments[3], arguments[4], System.EnvironmentVariableTarget.Machine);
-                                        else if (arguments[5] == "process")
-                                            Environments.CreateEnvironmentVariable(arguments[3], arguments[4], System.EnvironmentVariableTarget.Process);
-                                    Environments.CreateEnvironmentVariable(arguments[3], arguments[4]);
-                                }
-                                break;
+                                case "var": //os env var
+                                    {
+                                        if (arguments[2] != "create")//os env var {VARNAME}
+                                            Environments.GetEnvironmentVariableValue(arguments[2]);
+                                        else // os env var create {VARNAME} {VALUE}
+                                        {
+                                            if (arguments[5] != null) // os env var create {VARNAME} {VALUE} {TARGET(default = user)}
+                                                if (arguments[5] == "machine")
+                                                    Environments.CreateEnvironmentVariable(arguments[3], arguments[4], System.EnvironmentVariableTarget.Machine);
+                                                else if (arguments[5] == "process")
+                                                    Environments.CreateEnvironmentVariable(arguments[3], arguments[4], System.EnvironmentVariableTarget.Process);
+                                            Environments.CreateEnvironmentVariable(arguments[3], arguments[4]);
+                                        }
+                                        break;
+                                    }
+                                default:
+                                    Internal.Error("Unrecognized environment request!");
+                                    break;
                             }
-                        default:
-                            Internal.Error("Unrecognized environment request!");
                             break;
-                    }
+                        }
+                    case "mkd"://os mkd DIRNAME
+                        {
+                            if (!System.String.IsNullOrEmpty(arguments[1]))
+                            {
+                                try
+                                {
+                                    new SASH.IO.Create(this.path, new string[] { "-d", arguments[1], "in", "path" });
+                                } catch(System.IndexOutOfRangeException) { ; } //system security exception thrower..
+                            }
+                            else
+                            {
+                                Internal.Error("Invalid/null directory name!");
+                            }
+                            break;
+                        }
+                    default:
+                        Internal.Error($"Unrecognized OS arguments!");
+                        break;
                 }
             }
             else
@@ -61,6 +86,10 @@ namespace SASH.OS
             
         }
 
+        /// <summary>
+        /// Parses a single <paramref name="argument"/>.
+        /// </summary>
+        /// <param name="argument">An argument to be parsed.</param>
         private void ParseArgument(string argument)
         {
             switch (argument)

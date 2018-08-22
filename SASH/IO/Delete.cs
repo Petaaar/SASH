@@ -153,8 +153,9 @@ namespace SASH.IO
                         if (yn == 'y') //if you want to see all the items
                         {
                             System.Console.WriteLine("FILES TO DELETE:");
+                            System.Console.WriteLine("FILENAME                                  EXTENSION");
                             foreach (string item in commonItems)
-                                System.Console.WriteLine(item);
+                                System.Console.WriteLine($"{Path.GetFileNameWithoutExtension(item)}                                      {Path.GetExtension(item)}");
                         }
 
                         Internal.Ask("Are you sure you want to delete all these items?:[Y/N]"); char y = System.Console.ReadLine().ToLower().ToCharArray()[0];
@@ -250,7 +251,7 @@ namespace SASH.IO
                 new Help("delete");
                 Internal.Starter(this.path);
             }
-            else Internal.Error("Too few arguments given!");
+    
             if (arguments[1] != "in")
                 Internal.Error($"Expected keyword IN in the place of \"{arguments[1]}\".");
             if (arguments.Length == 5 && arguments[3] != "where")
@@ -273,7 +274,7 @@ namespace SASH.IO
 
             try
             {
-                if (!CheckPath(destination))
+                if (CheckPath(destination) == false)
                     Internal.Error($"The destination \"{destination}\" does not exist!");
                 else if (dirInfo.GetFileSystemInfos().Length == 0)
                     Internal.Error($"The destination \"{destination}\" is empty!");
