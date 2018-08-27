@@ -74,6 +74,35 @@ namespace SASH.OS
                             }
                             break;
                         }
+                    case "show": //os show
+                        {
+                            if (!System.String.IsNullOrEmpty(arguments[1]))
+                            {
+                                if (arguments[1].Equals("this"))
+                                    ParseArgument("-traverse");
+                                else
+                                {
+                                    string arg = System.String.Empty;
+
+                                    try
+                                    {                                        
+                                        if (System.String.IsNullOrEmpty(arguments[2]))
+                                            arg = arguments[2];
+                                    }
+                                    catch (System.IndexOutOfRangeException) { ; }
+                                    if (System.IO.Directory.Exists(arguments[1]))
+                                        try
+                                        {
+                                            new IO.Lister(arguments[1], arg);
+                                        }
+                                        catch (System.UnauthorizedAccessException) { Internal.Error($"Unauthorized access to \"{arguments[1]}\""); }
+                                }
+                            }
+                            else
+                                Internal.Error("Too few arguments for \"os show\" command!");
+
+                            break;
+                        }
                     default:
                         Internal.Error($"Unrecognized OS arguments!");
                         break;
@@ -102,6 +131,9 @@ namespace SASH.OS
                     System.Console.Write($"You are running ");
                     string bits = System.Environment.Is64BitOperatingSystem ? "64bit" : "32bit";
                     System.Console.WriteLine($"{bits} operating system!");
+                    break;
+                case "-traverse":
+                    new IO.Lister(path, System.String.Empty);
                     break;
                 default:
                     Internal.Error($"Unrecognized OS argument \"{argument}\"!");

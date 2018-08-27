@@ -18,14 +18,17 @@ namespace SASH.IO
 
         private void SaveFolders()
         {
-            foreach (var folder in Directory.GetDirectories(this.path))
-                items.Add(folder);
+            foreach (string folder in Directory.GetDirectories(this.path))
+                if (folder.Length > 30)
+                    items.Add($"[F]{Path.GetDirectoryName(folder)}");
+                else
+                    items.Add($"{folder}");
         }
 
         private void SaveFiles()
         {
             foreach (var file in Directory.GetFiles(this.path))
-                items.Add(file);
+                items.Add(Path.GetFileName(file));
         }
 
         private void Traverse(ArgumentType argument)

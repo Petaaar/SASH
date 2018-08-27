@@ -4,7 +4,7 @@ using SASH.IO;
 using SASH.Hidden;
 using SASH.OS;
 
-//COUNT OF LINES:2911. Date:21.8.2018 г. 12:55:04. Stage: Added OS command foundations.
+//COUNT OF LINES:3000. Date:27.8.2018 г. 12:48:27. Stage: Added flexible os command functions.
 namespace SASH
 {
     /// <summary>
