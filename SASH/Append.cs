@@ -12,8 +12,6 @@ namespace SASH
 
         public Append(string path, string name)
         {
-            System.Console.WriteLine("hi");
-
             this.path = path;
 
             Process(name);
